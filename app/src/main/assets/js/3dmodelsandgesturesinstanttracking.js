@@ -136,6 +136,7 @@ var World = {
             document.getElementById("tracking-start-stop-button").src = "assets/buttons/stop.png";
             document.getElementById("tracking-height-slider-container").style.visibility = "hidden";
 
+
             this.tracker.state = AR.InstantTrackerState.TRACKING;
         } else {
             
