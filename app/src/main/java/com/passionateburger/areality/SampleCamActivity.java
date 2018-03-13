@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.wikitude.architect.ArchitectJavaScriptInterfaceListener;
+import com.wikitude.architect.ArchitectStartupConfiguration;
 import com.wikitude.architect.ArchitectView;
 import com.wikitude.common.camera.CameraSettings;
 
@@ -137,8 +138,8 @@ public class SampleCamActivity extends AbstractArchitectCamActivity {
 
     @Override
     protected boolean hasInstant() {
-        return true;
-        //return (ArchitectView.getSupportedFeaturesForDevice(getApplicationContext()) & ArchitectStartupConfiguration.Features.InstantTracking) != 0;
+        //return true;
+        return (ArchitectView.getSupportedFeaturesForDevice(getApplicationContext()) & ArchitectStartupConfiguration.Features.InstantTracking) != 0;
     }
 
     @Override
