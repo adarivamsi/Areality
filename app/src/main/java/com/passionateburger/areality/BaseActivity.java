@@ -55,7 +55,9 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
             } else {
                 // User is signed out
                 Log.d(TAG, "onAuthStateChanged:signed_out");
-                startActivity(new Intent(BaseActivity.this, LoginActivity.class));
+                Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
+                intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(intent);
                 finish();
             }
             // ...
