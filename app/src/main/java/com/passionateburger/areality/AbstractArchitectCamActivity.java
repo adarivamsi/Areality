@@ -17,7 +17,6 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import com.wikitude.architect.ArchitectJavaScriptInterfaceListener;
 import com.wikitude.architect.ArchitectStartupConfiguration;
 import com.wikitude.architect.ArchitectView;
 import com.wikitude.architect.services.camera.CameraLifecycleListener;
@@ -51,10 +50,6 @@ public abstract class AbstractArchitectCamActivity extends Activity implements A
      */
     protected ArchitectView.SensorAccuracyChangeListener sensorAccuracyListener;
 
-    /**
-     * JS interface listener handling e.g. 'AR.platform.sendJSONObject({foo:"bar", bar:123})' calls in JavaScript
-     */
-    protected ArchitectJavaScriptInterfaceListener mArchitectJavaScriptInterfaceListener;
 
     /**
      * worldLoadedListener receives calls when the AR world is finished loading or when it failed to laod.
@@ -184,13 +179,6 @@ public abstract class AbstractArchitectCamActivity extends Activity implements A
         // set accuracy listener if implemented, you may e.g. show calibration prompt for compass using this listener
         this.sensorAccuracyListener = this.getSensorAccuracyListener();
 
-        // set JS interface listener, any calls made in JS like 'AR.platform.sendJSONObject({foo:"bar", bar:123})' is forwarded to this listener, use this to interact between JS and native Android activity/fragment
-        this.mArchitectJavaScriptInterfaceListener = this.getArchitectJavaScriptInterfaceListener();
-
-        // set JS interface listener in architectView, ensure this is set before content is loaded to not miss any event
-        if (this.mArchitectJavaScriptInterfaceListener != null && this.architectView != null) {
-            this.architectView.addArchitectJavaScriptInterfaceListener(mArchitectJavaScriptInterfaceListener);
-        }
     }
 
     protected abstract CameraSettings.CameraPosition getCameraPosition();
@@ -304,12 +292,6 @@ public abstract class AbstractArchitectCamActivity extends Activity implements A
      */
     @Override
     public abstract String getARchitectWorldPath();
-
-    /**
-     * JS interface listener fired once e.g. 'AR.platform.sendJSONObject({foo:"bar", bar:123})' is called in JS
-     */
-    @Override
-    public abstract ArchitectJavaScriptInterfaceListener getArchitectJavaScriptInterfaceListener();
 
     /**
      * @return layout id of your layout.xml that holds an ARchitect View, e.g. R.layout.camview
