@@ -55,9 +55,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
             } else {
                 // User is signed out
                 Log.d(TAG, "onAuthStateChanged:signed_out");
-                Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
-                intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
-                startActivity(intent);
+                startActivity(new Intent(BaseActivity.this, LoginActivity.class));
                 finish();
             }
             // ...
@@ -206,7 +204,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_models) {
 
         } else if (id == R.id.nav_whishlist) {
-
+            fragmentClass = FavFragment.class;
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_logout) {
