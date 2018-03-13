@@ -10,7 +10,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.passionateburger.LoginActivity">
+    tools:context="com.passionateburger.areality.LoginActivity">
 
     <!-- Login progress -->
     <ImageView
@@ -178,7 +178,8 @@
                                     android:imeOptions="actionUnspecified"
                                     android:inputType="textPassword"
                                     android:maxLength="25"
-                                    android:maxLines="1" />
+                                    android:maxLines="1"
+                                    tools:ignore="InvalidImeActionId"/>
 
                             </android.support.design.widget.TextInputLayout>
 
