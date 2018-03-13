@@ -35,10 +35,10 @@ import com.squareup.picasso.Picasso;
 public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private static final String TAG = "BaseActivity";
-    protected DrawerLayout drawer;
-    protected ActionBarDrawerToggle toggle;
     protected NavigationView navigationView;
-    protected ProgressBar mProgressView;
+    private DrawerLayout drawer;
+    private ActionBarDrawerToggle toggle;
+    private ProgressBar mProgressView;
     protected FirebaseAuth mAuth;
     protected FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -47,20 +47,24 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
         mAuth = FirebaseAuth.getInstance();
-        mAuthListener = firebaseAuth -> {
-            FirebaseUser user = firebaseAuth.getCurrentUser();
-            if (user != null) {
-                // User is signed in
-                Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-            } else {
-                // User is signed out
-                Log.d(TAG, "onAuthStateChanged:signed_out");
-                startActivity(new Intent(BaseActivity.this, LoginActivity.class));
-                finish();
-            }
-            // ...
-        };
-        if(mAuth.getCurrentUser() != null) {
+        mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser() == null) {
+            Log.e(TAG, "User is signed out");
+            Intent loginIntent = new Intent(BaseActivity.this, LoginActivity.class);
+            loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(loginIntent);
+            finish();
+        } else {
+            mAuthListener = firebaseAuth -> {
+                if (firebaseAuth.getCurrentUser() == null) {
+                    Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(loginIntent);
+                    finish();
+
+                }
+
+            };
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             mProgressView = (ProgressBar) findViewById(R.id.progress);
@@ -92,7 +96,6 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -119,7 +122,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
 
         // Sync the toggle state after onRestoreInstanceState has occurred.
 
-        if(mAuth.getCurrentUser()!= null) {
+        if (mAuth.getCurrentUser() != null) {
             toggle.syncState();
         }
 
@@ -138,16 +141,18 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
 
     public void UserSetup() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        ImageView userimage = (ImageView) findViewById(R.id.userimage);
-        TextView username = (TextView) findViewById(R.id.username);
-        TextView useremail = (TextView) findViewById(R.id.useremail);
+        ImageView userimage = (ImageView) findViewById(R.id.nav_user_image);
+        TextView username = (TextView) findViewById(R.id.nav_user_name);
+        TextView useremail = (TextView) findViewById(R.id.nav_user_email);
 
         if (user != null) {
 
-            Picasso.with(getApplicationContext())
-                    .load(user.getPhotoUrl())
-                    .resize(userimage.getWidth(), userimage.getWidth())
-                    .into(userimage);
+            if (!user.getPhotoUrl().toString().isEmpty()) {
+                Picasso.with(getApplicationContext())
+                        .load(user.getPhotoUrl())
+                        .resize(userimage.getWidth(), userimage.getWidth())
+                        .into(userimage);
+            }
             username.setText(user.getDisplayName());
             useremail.setText(user.getEmail());
         }
@@ -193,29 +198,27 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        Fragment fragment = null;
-
-        Class fragmentClass = HomeFragment.class;
 
         if (id == R.id.nav_home) {
-            fragmentClass = HomeFragment.class;
+            HomeFragment home = HomeFragment.newInstance();
+            getSupportFragmentManager().beginTransaction().replace(R.id.flContent, home).commit();
+        } else if (id == R.id.nav_camera) {
+            startActivity(new Intent(BaseActivity.this, AutoHdSampleCamActivity.class));
         } else if (id == R.id.nav_account) {
-            fragmentClass = ProfileFragment.class;
+            ProfileFragment profile = ProfileFragment.newInstance();
+            getSupportFragmentManager().beginTransaction().replace(R.id.flContent, profile).commit();
         } else if (id == R.id.nav_models) {
 
         } else if (id == R.id.nav_whishlist) {
-            fragmentClass = FavFragment.class;
+            FavFragment fav = FavFragment.newInstance();
+            getSupportFragmentManager().beginTransaction().replace(R.id.flContent, fav).commit();
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_logout) {
             mAuth.signOut();
             LoginManager.getInstance().logOut();
         }
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
         item.setChecked(true);

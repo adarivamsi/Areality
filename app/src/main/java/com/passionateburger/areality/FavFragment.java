@@ -52,7 +52,7 @@ public class FavFragment {
     public FavFragment() {
     }
 
-    public static FavFragment newInstance(String category) {
+    public static FavFragment newInstance() {
         FavFragment fragment = new FavFragment();
         return fragment;
     }
