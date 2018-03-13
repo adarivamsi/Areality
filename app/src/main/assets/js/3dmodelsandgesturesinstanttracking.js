@@ -5,8 +5,8 @@ var rotationValues = [];
 var scaleValues = [];
 
 var allCurrentModels = [];
-
 var allModelImgSources = ["assets/buttons/clock.png","assets/buttons/couch.png","assets/buttons/office_chair.png","assets/buttons/table.png","assets/buttons/trainer.png"] ;
+
 
 var oneFingerGestureAllowed = false;
 
@@ -18,7 +18,7 @@ AR.context.on2FingerGestureStarted = function() {
 }
 
 var World = {
-    modelPaths: ["assets/models/clock.wt3", "assets/models/couch.wt3", "assets/models/officechair.wt3", "assets/models/table.wt3", "assets/models/trainer.wt3"],
+    modelPaths: ["assets/models/clock.wt3", "assets/models/couch.wt3", "assets/models/officechair.wt3", "assets/models/table.wt3", "assets/models/trainer.wt3" ],
     /*
         requestedModel is the index of the next model to be created. This is necessary because we have to wait one frame in order to pass the correct initial position to the newly created model.
         initialDrag is a boolean that serves the purpose of swiping the model into the scene. In the moment that the model is created, the drag event has already started and will not be caught by the model, so the motion has to be carried out by the tracking plane.
@@ -28,9 +28,14 @@ var World = {
     initialDrag: false,
     lastAddedModel: null,
 
-    init: function initFn() {
+/*    init: function initFn() {
+        $("#inputs").empty();
+        for(var i=0;i<allModelImgSources.length;i++){
+            $("#inputs").append("<input data-id=" + i + " class='tracking-model-button list-group-item' type='image' src="+allModelImgSources[i]+" />");
+        }
+        $("#inputs").append("<input id='tracking-model-reset-button' class='tracking-model-button list-group-item' type='image' src='assets/buttons/trash.png' onclick='World.resetModels()' />");
         this.createOverlays();
-    },
+    },*/
 
     createOverlays: function createOverlaysFn() {
         var crossHairsRedImage = new AR.ImageResource("assets/crosshairs_red.png");
@@ -48,7 +53,7 @@ var World = {
                 alert(errorMessage);
             }
         });
-        
+
         this.instantTrackable = new AR.InstantTrackable(this.tracker, {
             drawables: {
                 cam: crossHairsBlueDrawable,
@@ -78,17 +83,16 @@ var World = {
                 alert(errorMessage);
             }
         });
-for(var i=0;i<allModelImgSources.length;i++){
-                   $("#inputs").append("<input data-id="+i+"  class='tracking-model-button-inactive' type='image' src="+allModelImgSources[i]+" />");
-            }
+
         World.setupEventListeners()
     },
 
     setupEventListeners: function setupEventListenersFn() {
-    $('.tracking-model-button-inactive').on('click',function(){
-                    World.requestedModel = $(this).data("id");
-                                    });
-                /*
+
+            $('.tracking-model-button-inactive').on('click',function(){
+                World.requestedModel = $(this).data("id");
+            });
+        /*
         document.getElementById("tracking-model-button-0").addEventListener('touchstart', function(ev){
             World.requestedModel = 0;
         }, false);
@@ -120,41 +124,28 @@ for(var i=0;i<allModelImgSources.length;i++){
     },
 
     changeTrackerState: function changeTrackerStateFn() {
-        // el moshkela :
-                  // 1- lama betdoos start w el items btezhar , lama betdoos stop w b3deen start tany btezhar el items tany fa lazem ne3ml reset lel div deh
-                  // 2- el listiner ta2reban feh moshkela bta3 el items la2eno mesh byezher el alert
+
         if (this.tracker.state === AR.InstantTrackerState.INITIALIZING) {
-            
-            var els = [].slice.apply(document.getElementsByClassName("tracking-model-button-inactive"));
-            for (var i = 0; i < els.length; i++) {
-                console.log(els[i]);
-                els[i].className = els[i].className = "tracking-model-button";
-            }
-            
+
+            $("#sidebar").show();
             document.getElementById("tracking-start-stop-button").src = "assets/buttons/stop.png";
             document.getElementById("tracking-height-slider-container").style.visibility = "hidden";
 
-
             this.tracker.state = AR.InstantTrackerState.TRACKING;
         } else {
-            
-            var els = [].slice.apply(document.getElementsByClassName("tracking-model-button"));
-            for (var i = 0; i < els.length; i++) {
-                console.log(els[i]);
-                els[i].className = els[i].className = "tracking-model-button-inactive";
-            }
-            
+
+            $("#sidebar").hide();
             document.getElementById("tracking-start-stop-button").src = "assets/buttons/start.png";
             document.getElementById("tracking-height-slider-container").style.visibility = "visible";
-            
+
             this.tracker.state = AR.InstantTrackerState.INITIALIZING;
         }
     },
-    
+
     changeTrackingHeight: function changeTrackingHeightFn(height) {
         this.tracker.deviceHeight = parseFloat(height);
     },
-    
+
     addModel: function addModelFn(pathIndex, xpos, ypos) {
         if (World.isTracking()) {
             var modelIndex = rotationValues.length;
@@ -182,7 +173,7 @@ for(var i=0;i<allModelImgSources.length;i++){
                         // We recommend setting the entire translate property rather than
                         // its individual components as the latter would cause several
                         // call to native, which can potentially lead to performance
-                        // issues on older devices. The same applied to the rotate and 
+                        // issues on older devices. The same applied to the rotate and
                         // scale property
                         this.translate = {x:intersectionX, y:intersectionY};
                     }
@@ -237,7 +228,23 @@ for(var i=0;i<allModelImgSources.length;i++){
     resetAllModelValues: function resetAllModelValuesFn() {
         rotationValues = [];
         scaleValues = [];
-    }
-};
+    },
 
-World.init();
+    loadPathFromJsonData: function loadPathFromJsonDataFn(paths) {
+    	// empty list of visible markers
+    	World.modelPaths = []
+    	allModelImgSources = []
+    	for (var i = 0; i < paths.length; i++) {
+    	World.modelPaths.push(paths.model)
+    	allModelImgSources.push(paths.model)
+    	}
+        $("#inputs").empty();
+        for(var i=0;i<allModelImgSources.length;i++){
+            $("#inputs").append("<input data-id=" + i + " class='tracking-model-button list-group-item' type='image' src="+allModelImgSources[i]+" />");
+        }
+        $("#inputs").append("<input id='tracking-model-reset-button' class='tracking-model-button list-group-item' type='image' src='assets/buttons/trash.png' onclick='World.resetModels()' />");
+    	this.createOverlays();
+   	}
+};
+/*
+World.init();*/
