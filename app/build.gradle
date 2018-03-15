@@ -54,6 +54,7 @@ android {
         implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
         implementation 'me.grantland:autofittextview:0.2.1'
         implementation 'com.theartofdev.edmodo:android-image-cropper:2.4.6'
+        implementation 'com.liulishuo.filedownloader:library:1.5.6'
     }
 
     repositories {

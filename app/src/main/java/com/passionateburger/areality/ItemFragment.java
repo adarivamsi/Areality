@@ -1,9 +1,12 @@
 package com.passionateburger.areality;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,11 +35,13 @@ import java.util.Locale;
 public class ItemFragment extends Fragment{
 
     private static final String OBJECT_KEY = "KEY";
+    private static final String OBJECT_NAME = "NAME";
     private String CategoryKEY;
     private ViewPager mViewPager;
     private ProgressBar mProgressView;
     private FirebaseRecyclerAdapter<FireBaseHelper.Objects, viewholder> mAdapter = null;
     private RecyclerView recyclerView;
+    private String CategoryNAME;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -45,10 +50,11 @@ public class ItemFragment extends Fragment{
     public ItemFragment() {
     }
 
-    public static ItemFragment newInstance(String category) {
+    public static ItemFragment newInstance(String categorykey, String categoryname) {
         ItemFragment fragment = new ItemFragment();
         Bundle args = new Bundle();
-        args.putString(OBJECT_KEY, category);
+        args.putString(OBJECT_KEY, categorykey);
+        args.putString(OBJECT_NAME, categoryname);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,8 +63,10 @@ public class ItemFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CategoryKEY = getArguments().getString(OBJECT_KEY);
+        CategoryNAME = getArguments().getString(OBJECT_NAME);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,13 +80,17 @@ public class ItemFragment extends Fragment{
             recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             Query query = FireBaseHelper.Objects.Ref.orderByChild(FireBaseHelper.Objects.Table.Category.text).equalTo(CategoryKEY);
-            //showProgress(true);
+            ProgressDialog progressDialog = new ProgressDialog(getContext());
+            progressDialog.setTitle("Loading");
+            progressDialog.setMessage("Loading Category : " + CategoryNAME);
+            progressDialog.show();
             new FireBaseHelper.Objects().Where(FireBaseHelper.Objects.Table.Category, CategoryKEY, Data -> {
                 if (Data.size() < 1) {
-                    //showProgress(false);
+                    progressDialog.dismiss();
                 } else {
-                    RecyclerView.Adapter<viewholder> Adapter = new RecyclerView.Adapter<viewholder>() {
-                        @Override
+                    //region noadapter
+                     /* RecyclerView.Adapter<viewholder> Adapter = new RecyclerView.Adapter<viewholder>() {
+                                           @Override
                         public viewholder onCreateViewHolder(ViewGroup parent, int viewType) {
                             View itemView = LayoutInflater.from(parent.getContext())
                                     .inflate(R.layout.fragment_item, parent, false);
@@ -128,23 +140,23 @@ public class ItemFragment extends Fragment{
                         public int getItemCount() {
                             return Data.size();
                         }
-                    };
+                    };*/
+                    //endregion
 
                     //region old
 
-                   /* mAdapter = new FirebaseRecyclerAdapter<FireBaseHelper.Objects, viewholder>(
+                    mAdapter = new FirebaseRecyclerAdapter<FireBaseHelper.Objects, viewholder>(
                             FireBaseHelper.Objects.class, R.layout.fragment_item, viewholder.class, query) {
                         @Override
                         protected void populateViewHolder(viewholder viewHolder, FireBaseHelper.Objects model, int position) {
                             model.Findbykey(mAdapter.getRef(position).getKey(), Data -> {
                                 viewHolder.mTitleView.setText(Data.name);
-                                viewHolder.mCompanyView.setText(Data.companies.users.name);
+                                viewHolder.mCompanyView.setText(Data.companies.name);
                                 viewHolder.mRateView.setText(getRate(Data.feedbacks));
                                 Picasso.with(getContext()).load(Data.image_path).into(viewHolder.mImageView);
                                 viewHolder.mView.setOnClickListener(v -> {
-                                    Intent intent = new Intent(getActivity(), ModelActivity.class);
-                                    intent.putExtra(OBJECT_KEY, Data.Key);
-                                    startActivity(intent);
+                                    ModelFragment mod = ModelFragment.newInstance(Data.Key);
+                                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.flContent, mod).commit();
                                 });
                                 viewHolder.mImageButton.setOnClickListener(v -> {
                                     PopupMenu popup = new PopupMenu(context, viewHolder.mImageButton);
@@ -154,6 +166,10 @@ public class ItemFragment extends Fragment{
                                         int id = item.getItemId();
                                         if (id == R.id.item_download) {
                                         } else if (id == R.id.item_favorite) {
+                                            FireBaseHelper.Favorites favorites = new FireBaseHelper.Favorites();
+                                            favorites.user_id = mAuth.getCurrentUser().getUid();
+                                            favorites.object_id = Data.Key;
+                                            favorites.Add(Data.Key + mAuth.getCurrentUser().getUid());
                                         } else if (id == R.id.item_delete) {
                                         }
                                         return true;
@@ -161,14 +177,13 @@ public class ItemFragment extends Fragment{
                                     popup.show();
                                 });
                                 if (mAdapter.getItemCount() - 1 == position) {
-                                    showProgress(false);
-                                }
+                                    progressDialog.dismiss();                                }
                             });
                         }
                     };
                     */
                     //endregion
-                    recyclerView.setAdapter(Adapter);
+                    recyclerView.setAdapter(mAdapter);
                 }
             });
 
@@ -178,7 +193,10 @@ public class ItemFragment extends Fragment{
 
     private String getRate(List<FireBaseHelper.Feedbacks> lst) {
 
-        int sum = 0;
+        if (lst.size() == 0) {
+            return "0.0";
+        } else {
+            int sum = 0;
 
         for (FireBaseHelper.Feedbacks item : lst) {
             sum += Integer.parseInt(item.rate);
@@ -186,12 +204,6 @@ public class ItemFragment extends Fragment{
         return String.format(Locale.ENGLISH, "%.1f", (double) sum / lst.size());
     }
 
-    public void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        mViewPager.setVisibility(show ? View.GONE : View.VISIBLE);
-        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     public static class viewholder extends RecyclerView.ViewHolder {
