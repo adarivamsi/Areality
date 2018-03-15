@@ -72,9 +72,9 @@ public class ItemFragment extends Fragment{
             recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             Query query = FireBaseHelper.Objects.Ref.orderByChild(FireBaseHelper.Objects.Table.Category.text).equalTo(CategoryKEY);
-           // showProgress(true);
+            //showProgress(true);
             new FireBaseHelper.Objects().Where(FireBaseHelper.Objects.Table.Category, CategoryKEY, Data -> {
-                if (Data.size() < 1 {
+                if (Data.size() < 1) {
                     //showProgress(false);
                 } else {
                     RecyclerView.Adapter<viewholder> Adapter = new RecyclerView.Adapter<viewholder>() {
@@ -169,7 +169,6 @@ public class ItemFragment extends Fragment{
                     */
                     //endregion
                     recyclerView.setAdapter(Adapter);
-
                 }
             });
 
@@ -213,5 +212,4 @@ public class ItemFragment extends Fragment{
             mImageButton = (ImageButton) view.findViewById(R.id.item_menu);
         }
     }
-
 }

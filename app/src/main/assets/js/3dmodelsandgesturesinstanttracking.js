@@ -62,6 +62,7 @@ var World = {
             },
             onTrackingStarted: function onTrackingStartedFn() {
                 // do something when tracking is started (recognized)
+                 $("#tracking-start-stop-button").attr('src','assets/buttons/start.png');
             },
             onTrackingStopped: function onTrackingStoppedFn() {
                 // do something when tracking is stopped (lost)
@@ -71,6 +72,7 @@ var World = {
             },
             onTrackingPlaneDragBegan: function onTrackingPlaneDragBeganFn(xPos, yPos) {
                 oneFingerGestureAllowed = true;
+                $("#tracking-start-stop-button").attr('src','assets/buttons/deleteObj.png');
                 World.updatePlaneDrag(xPos, yPos);
             },
             onTrackingPlaneDragChanged: function onTrackingPlaneDragChangedFn(xPos, yPos) {
@@ -78,6 +80,10 @@ var World = {
             },
             onTrackingPlaneDragEnded: function onTrackingPlaneDragEndedFn(xPos, yPos) {
                 World.updatePlaneDrag(xPos, yPos);
+                if((yPos<-1.1&&yPos>-1.5)&&( (xPos<0.079&&xPos>0.0069) || (xPos>0.01&&xPos<0.09) )){
+                    //alert("here");
+                }
+                $("#tracking-start-stop-button").attr('src','assets/buttons/start.png');
                 World.initialDrag = false;
             },
             onError: function(errorMessage) {
@@ -90,7 +96,7 @@ var World = {
 
     setupEventListeners: function setupEventListenersFn() {
 
-            $('.tracking-model-button-inactive').on('click',function(){
+            $('.tracking-model-button').on('touchstart',function(){
                 World.requestedModel = $(this).data("id");
             });
     },
@@ -101,7 +107,8 @@ var World = {
             World.requestedModel = -1;
             World.initialDrag = true;
         }
-
+        //if(xPos==deleteObjBtnPos.left)
+// this.instantTrackable.drawables.removeCamDrawable(allCurrentModels[i]);
         if (World.initialDrag && oneFingerGestureAllowed) {
             lastAddedModel.translate = {x:xPos, y:yPos};
         }
@@ -202,15 +209,15 @@ var World = {
     },
 
     resetModels: function resetModelsFn() {
-    if (confirm('Are you sure you want to Delete All Models?')) {
+        if (confirm('Are you sure you want to Delete All Models?')) {
         for (var i = 0; i < allCurrentModels.length; i++) {
             this.instantTrackable.drawables.removeCamDrawable(allCurrentModels[i]);
         }
-        allCurrentModels = [];
-        World.resetAllModelValues();
-         } else {
-         // Do nothing!
-         }
+            allCurrentModels = [];
+            World.resetAllModelValues();
+        } else {
+            // Do nothing!
+        }
     },
 
     resetAllModelValues: function resetAllModelValuesFn() {
@@ -220,11 +227,15 @@ var World = {
 
     loadPathFromJsonData: function loadPathFromJsonDataFn(paths) {
     	// empty list of visible markers
-    	World.modelPaths = []
-    	allModelImgSources = []
+        $("#tracking-start-stop-button").on('load',function(){
+            deleteObjBtnPos = $(this).offset();
+        });
+    	World.modelPaths = [];
+    	allModelImgSources = [];
     	for (var i = 0; i < paths.length; i++) {
-    	World.modelPaths.push(paths.model)
-    	allModelImgSources.push(paths.model)
+            World.modelPaths.push(paths[i].model);
+            allModelImgSources.push(paths[i].image) ;
+
     	}
         $("#inputs").empty();
         for(var i=0;i<allModelImgSources.length;i++){

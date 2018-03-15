@@ -84,7 +84,7 @@
             android:name=".BaseActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        +
+
 
         <activity
                 android:name="com.facebook.CustomTabActivity"

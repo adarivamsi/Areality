@@ -17,20 +17,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static android.content.ContentValues.TAG;
-
 /**
  * Created by adari on 3/11/2018.
  */
 
 public class FireBaseHelper {
-
     private static final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private static final DatabaseReference myRootRef = database.getReference();
-
+    private static final String TAG = "FirebaseHelper";
 
     public interface OnGetDataListener<T> {
-        void onSuccess(T Data);
         void onSuccess(T Data);
     }
 

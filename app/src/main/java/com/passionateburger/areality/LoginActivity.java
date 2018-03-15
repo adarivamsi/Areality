@@ -40,8 +40,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
@@ -50,9 +49,9 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
  * Created by adari on 3/11/2018.
  */
 
-public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
-    private static final String TAG = "Login Activity";
+public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, OnClickListener {
 
+    private static final String TAG = "Login Activity";
     private static final int RC_SIGN_IN = 9001;
     private static final String DESIGNER_TYPE = "user";
     // UI references.
@@ -76,12 +75,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     //Facebook
     private CallbackManager callbackManager;
+    private LoginButton facebookbtn;
     //Google
     private GoogleApiClient mGoogleApiClient;
     //Twitter
     private TwitterLoginButton twitterbtn;
     //FireBase
     private FirebaseAuth mAuth;
+
 
     /**
      * Show hidden view by animation
@@ -186,7 +187,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         //region Facebook HashKey
         /*PackageInfo info;
         try {
-            info = getPackageManager().getPackageInfo("com.fcih.gp.furniturego", PackageManager.GET_SIGNATURES);
+            info = getPackageManager().getPackageInfo("com.passionateburger.areality", PackageManager.GET_SIGNATURES);
             for (Signature signature : info.signatures) {
                 MessageDigest md;
                 md = MessageDigest.getInstance("SHA");
@@ -203,6 +204,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             Log.e("exception", e.toString());
         }*/
         //endregion
+
+        Twitter.initialize(LoginActivity.this);
+        twitterbtn = new TwitterLoginButton(LoginActivity.this);
+        callbackManager = CallbackManager.Factory.create();
 
         GoogleLogin();
     }
@@ -228,7 +233,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 EmailRegister();
                 break;
             case R.id.facebook:
-                LoginButton facebookbtn = new LoginButton(LoginActivity.this);
+                facebookbtn = new LoginButton(LoginActivity.this);
                 FacebookLogin(facebookbtn);
                 showProgress(true);
                 facebookbtn.performClick();
@@ -239,7 +244,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 startActivityForResult(signInIntent, RC_SIGN_IN);
                 break;
             case R.id.twitter:
-                twitterbtn = new TwitterLoginButton(LoginActivity.this);
                 TwitterLogin(twitterbtn);
                 showProgress(true);
                 twitterbtn.performClick();
@@ -250,7 +254,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     //region external login (Facebook , Twitter , Google)
-
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -280,7 +283,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     private void GoogleLogin() {
-
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -290,13 +292,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this , this )
+                .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
     }
 
     private void FacebookLogin(LoginButton fbLoginButton) {
-        callbackManager = CallbackManager.Factory.create();
         fbLoginButton.setReadPermissions("email", "public_profile");
         fbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -332,10 +333,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             public void failure(TwitterException exception) {
                 Log.w(TAG, "twitterLogin:failure", exception);
-                        showProgress(false);
+                showProgress(false);
                 Toast.makeText(LoginActivity.this, exception.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
+            }
+
+        });
     }
 
     private void handleResult(AccessToken token) {
@@ -360,14 +362,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
                     if (!task.isSuccessful()) {
                         Log.w(TAG, "signInWithCredential", task.getException());
+                        showProgress(false);
                         Toast.makeText(LoginActivity.this, "Authentication failed.\n" + task.getException(),
                                 Toast.LENGTH_SHORT).show();
                     } else {
                         final FirebaseUser user = task.getResult().getUser();
-                         FireBaseHelper.Users FUSER = new FireBaseHelper.Users();
+                        FireBaseHelper.Users FUSER = new FireBaseHelper.Users();
                         FUSER.name = user.getDisplayName();
                         FUSER.email = user.getEmail();
                         FUSER.image_uri = user.getPhotoUrl().toString();
@@ -387,7 +389,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     /**
      * Email Login
      */
-
     private void EmailLogin() {
 
         if (isEmailValid(mLogin_emailView) && isPasswordValid(mLogin_passwordView)) {
@@ -406,7 +407,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         }
     }
 
-      /**
+    /**
      * Email Register
      */
     private void EmailRegister() {
@@ -472,6 +473,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     });
         }
     }
+
     //endregion
 
     //region Validation
@@ -544,4 +546,5 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             }
         });
     }
+
 }
