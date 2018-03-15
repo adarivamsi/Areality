@@ -32,6 +32,7 @@ public class SampleCam2Activity extends AutoHdSampleCamActivity {
         public void onCameraOpenAbort() {
             /*
                 This is a workaround for some devices whose camera2 implementation is not working as expected.
+
             */
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                 AlertDialog alertDialog = new AlertDialog.Builder(SampleCam2Activity.this).create();
