@@ -72,6 +72,27 @@ public class SampleCamActivity extends AbstractArchitectCamActivity {
         };
     }
 
+    @Override
+    public ArchitectJavaScriptInterfaceListener getArchitectJavaScriptInterfaceListener() {
+        return jsonObject -> {
+            try {
+                switch (jsonObject.getString("action")) {
+                    case "capture_screen":
+                        SampleCamActivity.this.architectView.captureScreen(ArchitectView.CaptureScreenCallback.CAPTURE_MODE_CAM_AND_WEBVIEW, screenCapture -> {
+                            if (ContextCompat.checkSelfPermission(SampleCamActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                SampleCamActivity.this.screenCapture = screenCapture;
+                                ActivityCompat.requestPermissions(SampleCamActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WIKITUDE_PERMISSIONS_REQUEST_EXTERNAL_STORAGE);
+                            } else {
+                                SampleCamActivity.this.saveScreenCaptureToExternalStorage(screenCapture);
+                            }
+                        });
+                        break;
+                }
+            } catch (JSONException e) {
+                Log.e(TAG, "onJSONObjectReceived: ", e);
+            }
+        };
+    }
 
     @Override
     public ArchitectView.ArchitectWorldLoadedListener getWorldLoadedListener() {
@@ -109,8 +130,13 @@ public class SampleCamActivity extends AbstractArchitectCamActivity {
 
     @Override
     protected boolean hasInstant() {
-        return true;
-        //return (ArchitectView.getSupportedFeaturesForDevice(getApplicationContext()) & ArchitectStartupConfiguration.Features.InstantTracking) != 0;
+        //return true;
+        return (ArchitectView.getSupportedFeaturesForDevice(getApplicationContext()) & ArchitectStartupConfiguration.Features.InstantTracking) != 0;
+    }
+
+    @Override
+    public CameraSettings.CameraResolution getCameraResolution() {
+        return CameraSettings.CameraResolution.AUTO;
     }
 
     @Override
@@ -121,15 +147,15 @@ public class SampleCamActivity extends AbstractArchitectCamActivity {
     protected void saveScreenCaptureToExternalStorage(Bitmap screenCapture) {
         if ( screenCapture != null ) {
             // store screenCapture into external cache directory
-            final File screenCaptureFile = new File(Environment.getExternalStorageDirectory().toString(), "screenCapture_" + System.currentTimeMillis() + ".jpg");
+            final File screenCaptureFile = new File(Environment.getExternalStorageDirectory().toString() + File.separator + "FurnitureGo ScreenShots" + File.separator, "Shoot_" + System.currentTimeMillis() + ".jpg");
 
             // 1. Save bitmap to file & compress to jpeg. You may use PNG too
             try {
-
                 final FileOutputStream out = new FileOutputStream(screenCaptureFile);
                 screenCapture.compress(Bitmap.CompressFormat.JPEG, 90, out);
                 out.flush();
                 out.close();
+                Toast.makeText(SampleCamActivity.this, "ScreenShot Saved at " + screenCaptureFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
 
                 // 2. create send intent
                 final Intent share = new Intent(Intent.ACTION_SEND);
@@ -149,6 +175,4 @@ public class SampleCamActivity extends AbstractArchitectCamActivity {
             }
         }
     }
-
-
 }

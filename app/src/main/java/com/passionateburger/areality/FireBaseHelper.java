@@ -98,13 +98,17 @@ public class FireBaseHelper {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     //ex: final ClassName obj = new Teams();
-                    final ClassName obj = new ClassName();
-                    obj.Key = dataSnapshot.getKey();
-                    for (Table T : Table.values()) {
-                        setbyName(obj, T.name(), dataSnapshot.child(T.text).getValue().toString());
+                    if (dataSnapshot.exists()) {
+                        final ClassName obj = new ClassName();
+                        obj.Key = dataSnapshot.getKey();
+                        for (Table T : Table.values()) {
+                            setbyName(obj, T.name(), dataSnapshot.child(T.text).getValue().toString());
+                        }
+                        //if no foreign key
+                        listener.onSuccess(obj);
+                    } else {
+                        listener.onSuccess(null);
                     }
-                    //if no foreign key
-                    listener.onSuccess(obj);
                     //TODO:Foreign Keys
                     //ex:
                     //ForeignClass.findbykey(obj.ForeignKey, new OnGetDataListener() {
@@ -157,7 +161,7 @@ public class FireBaseHelper {
                         //}
                         //});
                     }
-                    if(dataSnapshot.getChildrenCount() == 0){
+                    if (dataSnapshot.getChildrenCount() == 0) {
                         listener.onSuccess(Items);
                     }
 
@@ -203,7 +207,7 @@ public class FireBaseHelper {
                         //}
                         //});
                     }
-                    if(dataSnapshot.getChildrenCount() == 0){
+                    if (dataSnapshot.getChildrenCount() == 0) {
                         listener.onSuccess(Items);
                     }
 
@@ -329,14 +333,19 @@ public class FireBaseHelper {
             Ref.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    //ex: final ClassName obj = new Teams();
-                    final Categories obj = new Categories();
-                    obj.Key = dataSnapshot.getKey();
-                    for (Table T : Table.values()) {
-                        setbyName(obj, T.name(), dataSnapshot.child(T.text).getValue().toString());
+                    if (dataSnapshot.exists()) {
+                        //ex: final ClassName obj = new Teams();
+                        final Categories obj = new Categories();
+                        obj.Key = dataSnapshot.getKey();
+                        for (Table T : Table.values()) {
+                            setbyName(obj, T.name(), dataSnapshot.child(T.text).getValue().toString());
+                        }
+                        //if no foreign key
+                        listener.onSuccess(obj);
+
+                    } else {
+                        listener.onSuccess(null);
                     }
-                    //if no foreign key
-                    listener.onSuccess(obj);
                     //ex:
                     //ForeignClass.findbykey(obj.ForeignKey, new OnGetDataListener() {
                     //@Override
@@ -387,7 +396,7 @@ public class FireBaseHelper {
                         //}
                         //});
                     }
-                    if(dataSnapshot.getChildrenCount() == 0){
+                    if (dataSnapshot.getChildrenCount() == 0) {
                         listener.onSuccess(Items);
                     }
 
@@ -432,7 +441,7 @@ public class FireBaseHelper {
                         //}
                         //});
                     }
-                    if(dataSnapshot.getChildrenCount() == 0){
+                    if (dataSnapshot.getChildrenCount() == 0) {
                         listener.onSuccess(Items);
                     }
 
@@ -597,19 +606,24 @@ public class FireBaseHelper {
             Ref.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    //ex: final ClassName obj = new Teams();
-                    final Companies obj = new Companies();
-                    obj.Key = dataSnapshot.getKey();
-                    for (Companies.Table T : Companies.Table.values()) {
-                        setbyName(obj, T.name(), dataSnapshot.child(T.text).getValue().toString());
+                    if (dataSnapshot.exists()) {
+                        //ex: final ClassName obj = new Teams();
+                        final Companies obj = new Companies();
+                        obj.Key = dataSnapshot.getKey();
+                        for (Companies.Table T : Companies.Table.values()) {
+                            setbyName(obj, T.name(), dataSnapshot.child(T.text).getValue().toString());
+                        }
+                        //if no foreign key
+                        //listener.onSuccess(obj);
+                        //ex:
+                        user_types.Findbykey(obj.type_id, Data -> {
+                            obj.user_types = Data;
+                            listener.onSuccess(obj);
+                        });
+
+                    } else {
+                        listener.onSuccess(null);
                     }
-                    //if no foreign key
-                    //listener.onSuccess(obj);
-                    //ex:
-                    user_types.Findbykey(obj.type_id, Data -> {
-                        obj.user_types = Data;
-                        listener.onSuccess(obj);
-                    });
                 }
 
                 @Override
@@ -645,7 +659,7 @@ public class FireBaseHelper {
                             }
                         });
                     }
-                    if(dataSnapshot.getChildrenCount() == 0){
+                    if (dataSnapshot.getChildrenCount() == 0) {
                         listener.onSuccess(Items);
                     }
 
@@ -682,7 +696,7 @@ public class FireBaseHelper {
                             }
                         });
                     }
-                    if(dataSnapshot.getChildrenCount() == 0){
+                    if (dataSnapshot.getChildrenCount() == 0) {
                         listener.onSuccess(Items);
                     }
 
@@ -757,6 +771,7 @@ public class FireBaseHelper {
         public String company_id;
         public String date;
         public String description;
+        public String gif_path;
         public String image_path;
         public String model_path;
         public String name;
@@ -807,6 +822,22 @@ public class FireBaseHelper {
             this.description = description;
         }
 
+        public String getGif_path() {
+            return gif_path;
+        }
+
+        public void setGif_path(String gif_path) {
+            this.gif_path = gif_path;
+        }
+
+        public String getImage_path() {
+            return image_path;
+        }
+
+        public void setImage_path(String image_path) {
+            this.image_path = image_path;
+        }
+
         public String getModel_path() {
             return model_path;
         }
@@ -829,14 +860,6 @@ public class FireBaseHelper {
 
         public void setPrice(String price) {
             this.price = price;
-        }
-
-        public String getImage_path() {
-            return image_path;
-        }
-
-        public void setImage_path(String image_path) {
-            this.image_path = image_path;
         }
 
 
@@ -881,39 +904,44 @@ public class FireBaseHelper {
             Ref.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    //ex: final ClassName obj = new Teams();
-                    final Objects obj = new Objects();
-                    obj.Key = dataSnapshot.getKey();
-                    for (Table T : Table.values()) {
-                        setbyName(obj, T.name(), dataSnapshot.child(T.text).getValue().toString());
-                    }
-                    //if no foreign key
-                    //listener.onSuccess(obj);
-                    //ex:
-                    companies.Findbykey(obj.company_id, Data -> {
-                        obj.companies = Data;
-                        categories.Findbykey(obj.category, Data12 -> {
-                            obj.categories = Data12;
-                            Feedbacks.Ref.orderByChild(Feedbacks.Table.Object_id.text).equalTo(key).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    final Feedbacks fed = new Feedbacks();
-                                    for (DataSnapshot data: dataSnapshot.getChildren()) {
-                                        for (Feedbacks.Table T : Feedbacks.Table.values()) {
-                                            fed.setbyName(fed, T.name(), data.child(T.text).getValue().toString());
-                                            obj.feedbacks.add(fed);
+                    if (dataSnapshot.exists()) {
+                        //ex: final ClassName obj = new Teams();
+                        final Objects obj = new Objects();
+                        obj.Key = dataSnapshot.getKey();
+                        for (Table T : Table.values()) {
+                            setbyName(obj, T.name(), dataSnapshot.child(T.text).getValue().toString());
+                        }
+                        //if no foreign key
+                        //listener.onSuccess(obj);
+                        //ex:
+                        companies.Findbykey(obj.company_id, Data -> {
+                            obj.companies = Data;
+                            categories.Findbykey(obj.category, Data12 -> {
+                                obj.categories = Data12;
+                                Feedbacks.Ref.orderByChild(Feedbacks.Table.Object_id.text).equalTo(key).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        final Feedbacks fed = new Feedbacks();
+                                        for (DataSnapshot data : dataSnapshot.getChildren()) {
+                                            for (Feedbacks.Table T : Feedbacks.Table.values()) {
+                                                fed.setbyName(fed, T.name(), data.child(T.text).getValue().toString());
+                                                obj.feedbacks.add(fed);
+                                            }
                                         }
+                                        listener.onSuccess(obj);
                                     }
-                                    listener.onSuccess(obj);
-                                }
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    Log.w(TAG, "Firebase Warning :" + databaseError);
-                                }
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.w(TAG, "Firebase Warning :" + databaseError);
+                                    }
+                                });
                             });
                         });
-                    });
+
+                    } else {
+                        listener.onSuccess(null);
+                    }
                 }
 
                 @Override
@@ -969,7 +997,65 @@ public class FireBaseHelper {
                             });
                         });
                     }
-                    if(dataSnapshot.getChildrenCount() == 0){
+                    if (dataSnapshot.getChildrenCount() == 0) {
+                        listener.onSuccess(Items);
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.w(TAG, "Firebase Warning :" + databaseError);
+                }
+            });
+        }
+
+        public void Where(Query query, final OnGetDataListListener<Objects> listener) {
+            //ex: final List<ClassName> Items = new ArrayList<>();
+            final List<Objects> Items = new ArrayList<>();
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    final Iterator iterator = dataSnapshot.getChildren().iterator();
+                    while (iterator.hasNext()) {
+                        DataSnapshot postSnapshot = (DataSnapshot) iterator.next();
+                        //ex: final ClassName obj = new Teams();
+                        final Objects obj = new Objects();
+                        obj.Key = postSnapshot.getKey();
+                        for (Table T : Table.values()) {
+                            setbyName(obj, T.name(), postSnapshot.child(T.text).getValue().toString());
+                        }
+                        //if no foreign key
+                        companies.Findbykey(obj.company_id, Data -> {
+                            obj.companies = Data;
+                            categories.Findbykey(obj.category, Data1 -> {
+                                obj.categories = Data1;
+                                Feedbacks.Ref.orderByChild(Feedbacks.Table.Object_id.text).equalTo(obj.Key).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        final Feedbacks fed = new Feedbacks();
+                                        for (DataSnapshot data : dataSnapshot.getChildren()) {
+                                            for (Feedbacks.Table T : Feedbacks.Table.values()) {
+                                                fed.setbyName(fed, T.name(), data.child(T.text).getValue().toString());
+                                                obj.feedbacks.add(fed);
+                                            }
+                                        }
+                                        Items.add(obj);
+                                        if (!iterator.hasNext()) {
+                                            listener.onSuccess(Items);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.w(TAG, "Firebase Warning :" + databaseError);
+                                    }
+                                });
+
+                            });
+                        });
+                    }
+                    if (dataSnapshot.getChildrenCount() == 0) {
                         listener.onSuccess(Items);
                     }
 
@@ -1025,7 +1111,7 @@ public class FireBaseHelper {
                             });
                         });
                     }
-                    if(dataSnapshot.getChildrenCount() == 0){
+                    if (dataSnapshot.getChildrenCount() == 0) {
                         listener.onSuccess(Items);
                     }
 
@@ -1073,6 +1159,7 @@ public class FireBaseHelper {
             Date("date"),
             Description("description"),
             Model_path("model_path"),
+            Gif_path("gif_path"),
             Name("name"),
             Price("price"),
             Image_path("image_path");
@@ -1187,19 +1274,24 @@ public class FireBaseHelper {
             Ref.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    //ex: final ClassName obj = new Teams();
-                    final Users obj = new Users();
-                    obj.Key = dataSnapshot.getKey();
-                    for (Table T : Table.values()) {
-                        setbyName(obj, T.name(), dataSnapshot.child(T.text).getValue().toString());
+                    if (dataSnapshot.exists()) {
+                        //ex: final ClassName obj = new Teams();
+                        final Users obj = new Users();
+                        obj.Key = dataSnapshot.getKey();
+                        for (Table T : Table.values()) {
+                            setbyName(obj, T.name(), dataSnapshot.child(T.text).getValue().toString());
+                        }
+                        //if no foreign key
+                        //listener.onSuccess(obj);
+                        //ex:
+                        user_types.Findbykey(obj.type_id, Data -> {
+                            obj.user_types = Data;
+                            listener.onSuccess(obj);
+                        });
+
+                    } else {
+                        listener.onSuccess(null);
                     }
-                    //if no foreign key
-                    //listener.onSuccess(obj);
-                    //ex:
-                    user_types.Findbykey(obj.type_id, Data -> {
-                        obj.user_types = Data;
-                        listener.onSuccess(obj);
-                    });
                 }
 
                 @Override
@@ -1235,7 +1327,7 @@ public class FireBaseHelper {
                             }
                         });
                     }
-                    if(dataSnapshot.getChildrenCount() == 0){
+                    if (dataSnapshot.getChildrenCount() == 0) {
                         listener.onSuccess(Items);
                     }
 
@@ -1272,7 +1364,7 @@ public class FireBaseHelper {
                             }
                         });
                     }
-                    if(dataSnapshot.getChildrenCount() == 0){
+                    if (dataSnapshot.getChildrenCount() == 0) {
                         listener.onSuccess(Items);
                     }
 
@@ -1401,14 +1493,19 @@ public class FireBaseHelper {
             Ref.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    //ex: final ClassName obj = new Teams();
-                    final User_Types obj = new User_Types();
-                    obj.Key = dataSnapshot.getKey();
-                    for (Table T : Table.values()) {
-                        setbyName(obj, T.name(), dataSnapshot.child(T.text).getValue().toString());
+                    if (dataSnapshot.exists()) {
+                        //ex: final ClassName obj = new Teams();
+                        final User_Types obj = new User_Types();
+                        obj.Key = dataSnapshot.getKey();
+                        for (Table T : Table.values()) {
+                            setbyName(obj, T.name(), dataSnapshot.child(T.text).getValue().toString());
+                        }
+                        //if no foreign key
+                        listener.onSuccess(obj);
+
+                    } else {
+                        listener.onSuccess(null);
                     }
-                    //if no foreign key
-                    listener.onSuccess(obj);
                     //ex:
                     //ForeignClass.findbykey(obj.ForeignKey, new OnGetDataListener() {
                     //@Override
@@ -1459,7 +1556,7 @@ public class FireBaseHelper {
                         //}
                         //});
                     }
-                    if(dataSnapshot.getChildrenCount() == 0){
+                    if (dataSnapshot.getChildrenCount() == 0) {
                         listener.onSuccess(Items);
                     }
 
@@ -1504,7 +1601,7 @@ public class FireBaseHelper {
                         //}
                         //});
                     }
-                    if(dataSnapshot.getChildrenCount() == 0){
+                    if (dataSnapshot.getChildrenCount() == 0) {
                         listener.onSuccess(Items);
                     }
 
@@ -1670,22 +1767,27 @@ public class FireBaseHelper {
             Ref.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    //ex: final ClassName obj = new Teams();
-                    final Feedbacks obj = new Feedbacks();
-                    obj.Key = dataSnapshot.getKey();
-                    for (Table T : Table.values()) {
-                        setbyName(obj, T.name(), dataSnapshot.child(T.text).getValue().toString());
-                    }
-                    //if no foreign key
-                    //listener.onSuccess(obj);
-                    //ex:
-                    objects.Findbykey(obj.object_id, Data -> {
-                        obj.objects = Data;
-                        users.Findbykey(obj.uid, Data1 -> {
-                            obj.users = Data1;
-                            listener.onSuccess(obj);
+                    if (dataSnapshot.exists()) {
+                        //ex: final ClassName obj = new Teams();
+                        final Feedbacks obj = new Feedbacks();
+                        obj.Key = dataSnapshot.getKey();
+                        for (Table T : Table.values()) {
+                            setbyName(obj, T.name(), dataSnapshot.child(T.text).getValue().toString());
+                        }
+                        //if no foreign key
+                        //listener.onSuccess(obj);
+                        //ex:
+                        objects.Findbykey(obj.object_id, Data -> {
+                            obj.objects = Data;
+                            users.Findbykey(obj.uid, Data1 -> {
+                                obj.users = Data1;
+                                listener.onSuccess(obj);
+                            });
                         });
-                    });
+
+                    } else {
+                        listener.onSuccess(null);
+                    }
                 }
 
                 @Override
@@ -1723,7 +1825,7 @@ public class FireBaseHelper {
                             });
                         });
                     }
-                    if(dataSnapshot.getChildrenCount() == 0){
+                    if (dataSnapshot.getChildrenCount() == 0) {
                         listener.onSuccess(Items);
                     }
 
@@ -1763,7 +1865,7 @@ public class FireBaseHelper {
                             });
                         });
                     }
-                    if(dataSnapshot.getChildrenCount() == 0){
+                    if (dataSnapshot.getChildrenCount() == 0) {
                         listener.onSuccess(Items);
                     }
 

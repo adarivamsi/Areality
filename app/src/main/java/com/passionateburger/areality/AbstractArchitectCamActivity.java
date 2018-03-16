@@ -14,9 +14,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import com.wikitude.architect.ArchitectJavaScriptInterfaceListener;
 import com.wikitude.architect.ArchitectStartupConfiguration;
 import com.wikitude.architect.ArchitectView;
 import com.wikitude.architect.services.camera.CameraLifecycleListener;
@@ -43,13 +46,17 @@ public abstract class AbstractArchitectCamActivity extends Activity implements A
     /**
      * holds the Wikitude SDK AR-View, this is where camera, markers, compass, 3D models etc. are rendered
      */
-    protected ArchitectView					architectView;
+    protected ArchitectView architectView;
 
     /**
      * sensor accuracy listener in case you want to display calibration hints
      */
     protected ArchitectView.SensorAccuracyChangeListener sensorAccuracyListener;
 
+    /**
+     * JS interface listener handling e.g. 'AR.platform.sendJSONObject({foo:"bar", bar:123})' calls in JavaScript
+     */
+    protected ArchitectJavaScriptInterfaceListener mArchitectJavaScriptInterfaceListener;
 
     /**
      * worldLoadedListener receives calls when the AR world is finished loading or when it failed to laod.
@@ -69,8 +76,8 @@ public abstract class AbstractArchitectCamActivity extends Activity implements A
             String list[] = file.list();
             for (String name : list) {
                 if (new File(pathname + File.separator + name).isDirectory()) {
-                    File model = new File(pathname + File.separator + name + Model_ext);
-                    File image = new File(pathname + File.separator + name + Image_ext);
+                    File model = new File(pathname + File.separator + name + File.separator+ name+ Model_ext);
+                    File image = new File(pathname + File.separator + name + File.separator+ name+ Image_ext);
                     if (model.exists() && image.exists()) {
                         final HashMap<String, String> modelInformation = new HashMap<String, String>();
                         modelInformation.put(ATTR_3D, model.getPath());
@@ -90,7 +97,6 @@ public abstract class AbstractArchitectCamActivity extends Activity implements A
     public void onCreate( final Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
 
-
         MissingDeviceFeatures missingDeviceFeatures = ArchitectView.isDeviceSupported(this,
                 ArchitectStartupConfiguration.Features.ImageTracking | ArchitectStartupConfiguration.Features.Geo | ArchitectStartupConfiguration.Features.InstantTracking);
 
@@ -101,7 +107,7 @@ public abstract class AbstractArchitectCamActivity extends Activity implements A
             finish();
         }
         mPermissionManager = ArchitectView.getPermissionManager();
-        String[] permissions = new String[]{Manifest.permission.CAMERA} ;
+        String[] permissions = new String[]{Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE} ;
 
         mPermissionManager.checkPermissions(this, permissions, PermissionManager.WIKITUDE_PERMISSION_REQUEST, new PermissionManager.PermissionManagerCallback() {
             @Override
@@ -128,8 +134,12 @@ public abstract class AbstractArchitectCamActivity extends Activity implements A
         });
 
 		/* pressing volume up/down should cause music volume changes */
-        this.setVolumeControlStream( AudioManager.STREAM_MUSIC );
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
+		/* full Screen Window */
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		/* set samples content view */
         this.setContentView( this.getContentViewId() );
 
@@ -179,13 +189,19 @@ public abstract class AbstractArchitectCamActivity extends Activity implements A
         // set accuracy listener if implemented, you may e.g. show calibration prompt for compass using this listener
         this.sensorAccuracyListener = this.getSensorAccuracyListener();
 
+        // set JS interface listener, any calls made in JS like 'AR.platform.sendJSONObject({foo:"bar", bar:123})' is forwarded to this listener, use this to interact between JS and native Android activity/fragment
+        this.mArchitectJavaScriptInterfaceListener = this.getArchitectJavaScriptInterfaceListener();
+
+        // set JS interface listener in architectView, ensure this is set before content is loaded to not miss any event
+        if (this.mArchitectJavaScriptInterfaceListener != null && this.architectView != null) {
+            this.architectView.addArchitectJavaScriptInterfaceListener(mArchitectJavaScriptInterfaceListener);
+        }
     }
 
     protected abstract CameraSettings.CameraPosition getCameraPosition();
 
     private int getFeatures() {
-        int features = (hasInstant() ? ArchitectStartupConfiguration.Features.InstantTracking : 0) ;
-        return features;
+        return (hasInstant() ? ArchitectStartupConfiguration.Features.InstantTracking : 0);
     }
 
     protected abstract boolean hasInstant();
@@ -256,10 +272,6 @@ public abstract class AbstractArchitectCamActivity extends Activity implements A
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
 
     @Override
     protected void onDestroy() {

@@ -1,13 +1,11 @@
 package com.passionateburger.areality;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.v4.view.ViewPager;
+import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -25,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.Query;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
@@ -58,10 +56,30 @@ public class ItemFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        try {
+            FragmentTransaction ft = getActivity().getSupportFragmentManager()
+                    .beginTransaction();
+            ft.remove(this);
+            ft.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CategoryKEY = getArguments().getString(OBJECT_KEY);
         CategoryNAME = getArguments().getString(OBJECT_NAME);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdapter != null)
+            mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -166,13 +184,20 @@ public class ItemFragment extends Fragment {
                                         });
                                     }
                                 });
-
+                                File Dir = new File(Environment.getExternalStorageDirectory(), File.separator + "FurnitureGo" + File.separator + Data.Key);
+                                if (Dir.exists()) {
+                                    popup.getMenu().findItem(R.id.item_download).setVisible(false);
+                                    popup.getMenu().findItem(R.id.item_delete).setVisible(true);
+                                } else {
+                                    popup.getMenu().findItem(R.id.item_download).setVisible(true);
+                                    popup.getMenu().findItem(R.id.item_delete).setVisible(false);
+                                }
                                 popup.setOnMenuItemClickListener(item -> {
                                     int id = item.getItemId();
                                     if (id == R.id.item_download) {
-                                        //ToDo:Download
+                                        ModelFragment.Download(Data, getContext());
                                     } else if (id == R.id.item_delete) {
-                                        //ToDo:Delete
+                                        ModelFragment.Delete(Data.Key, getContext());
                                     }
                                     return true;
                                 });

@@ -1,10 +1,12 @@
 package com.passionateburger.areality;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -23,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.Query;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
@@ -38,11 +40,8 @@ import java.util.Locale;
 
 public class FavFragment extends Fragment {
 
-    private static final String OBJECT_KEY = "KEY";
-    private ProgressBar mProgressView;
     private FirebaseRecyclerAdapter<FireBaseHelper.Favorites, viewholder> mAdapter = null;
     private RecyclerView recyclerView;
-    private View mView;
     private BaseActivity activity;
 
     /**
@@ -53,17 +52,9 @@ public class FavFragment extends Fragment {
     }
 
     public static FavFragment newInstance() {
-        FavFragment fragment = new FavFragment();
-        return fragment;
+        return new FavFragment();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        activity = (BaseActivity) getActivity();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,7 +62,9 @@ public class FavFragment extends Fragment {
         // Set the adapter
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         final Context context = view.getContext();
+        activity = (BaseActivity) getActivity();
         activity.findViewById(R.id.tabs).setVisibility(View.GONE);
+        activity.getSupportActionBar().show();
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         Query query = FireBaseHelper.Favorites.Ref.orderByChild(FireBaseHelper.Favorites.Table.User_id.text).equalTo(mAuth.getCurrentUser().getUid());
@@ -89,6 +82,7 @@ public class FavFragment extends Fragment {
             } else {
                 mAdapter = new FirebaseRecyclerAdapter<FireBaseHelper.Favorites, viewholder>(
                         FireBaseHelper.Favorites.class, R.layout.fragment_item, viewholder.class, query) {
+                    @RequiresApi(api = Build.VERSION_CODES.M)
                     @Override
                     protected void populateViewHolder(viewholder viewHolder, FireBaseHelper.Favorites model, int position) {
                         new FireBaseHelper.Objects().Findbykey(model.object_id, Data -> {
@@ -105,15 +99,23 @@ public class FavFragment extends Fragment {
                                 MenuInflater inflater1 = popup.getMenuInflater();
                                 inflater1.inflate(R.menu.pop_menu, popup.getMenu());
                                 popup.getMenu().findItem(R.id.item_favorite).setTitle("Remove From Favorite");
+                                File Dir = new File(Environment.getExternalStorageDirectory(), File.separator + "FurnitureGo" + File.separator + Data.Key);
+                                if (Dir.exists()) {
+                                    popup.getMenu().findItem(R.id.item_download).setVisible(false);
+                                    popup.getMenu().findItem(R.id.item_delete).setVisible(true);
+                                } else {
+                                    popup.getMenu().findItem(R.id.item_download).setVisible(true);
+                                    popup.getMenu().findItem(R.id.item_delete).setVisible(false);
+                                }
                                 popup.setOnMenuItemClickListener(item -> {
                                     int id = item.getItemId();
                                     if (id == R.id.item_download) {
-                                        //ToDo:Download
+                                        ModelFragment.Download(Data, getContext());
                                     } else if (id == R.id.item_favorite) {
                                         mAdapter.getRef(position).removeValue();
                                         mAdapter.notifyDataSetChanged();
                                     } else if (id == R.id.item_delete) {
-                                        //ToDo:Delete
+                                        ModelFragment.Delete(Data.Key, getContext());
                                     }
                                     return true;
                                 });
@@ -129,6 +131,19 @@ public class FavFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        try {
+            FragmentTransaction ft = getActivity().getSupportFragmentManager()
+                    .beginTransaction();
+            ft.remove(this);
+            ft.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private String getRate(List<FireBaseHelper.Feedbacks> lst) {
