@@ -3,11 +3,13 @@ var defaultRotationValue = 0;
 
 var rotationValues = [];
 var scaleValues = [];
-var oldscale:{x:0,y:0,z:0};
+var oldscalex;
+var oldscaley;
+var oldscalez;
 var allCurrentModels = [];
 var allModelImgSources = [];
 
-var deleteObj;
+var deleteObj = false;
 
 var oneFingerGestureAllowed = false;
 
@@ -25,7 +27,6 @@ $(document).ready(function(){
     } else if (event.originalEvent.changedTouches && event.originalEvent.changedTouches.length) {
         Touchposition = event.originalEvent.changedTouches[0];
     }
-    $("#textt").html("x ="+Touchposition.pageX+" y ="+Touchposition.pageY);
   });
 });
 
@@ -40,15 +41,14 @@ var World = {
         initialDrag: false,
         lastAddedModel: null,
 
-            init: function initFn() {
+    /*    init: function initFn() {
          $("#inputs").empty();
          for(var i=0;i<allModelImgSources.length;i++){
          $("#inputs").append("<input data-id=" + i + " class='tracking-model-button list-group-item' type='image' src="+allModelImgSources[i]+" />");
          }
          $("#inputs").append("<input id='tracking-model-reset-button' class='tracking-model-button list-group-item' type='image' src='assets/buttons/trash.png' onclick='World.resetModels()' />");
-
          this.createOverlays();
-         },
+     },*/
 
         createOverlays: function createOverlaysFn() {
             var crossHairsRedImage = new AR.ImageResource("assets/crosshairs_red.png");
@@ -181,13 +181,19 @@ var World = {
                                 //alert(event.type);
                                 //touch = event.originalEvent.changedTouches[0];
                                 if (Touchposition.pageX > off.left && Touchposition.pageX < right && Touchposition.pageY > off.top && Touchposition.pageY < bottom) {
-                                    deleteObj = true;
-                                    oldscale = this.scale;
-                                    this.scale = {x: 0.01, y: 0.01, z: 0.01};
+                                    if (deleteObj == false) {
+                                        deleteObj = true;
+                                        oldscalex = this.scale.x;
+                                        oldscaley = this.scale.y;
+                                        oldscalez = this.scale.z;
+                                        $(this.scale).animate({x: 0.01, y: 0.01, z: 0.01});
+                                        //this.scale = {x: 0.01, y: 0.01, z: 0.01};
+                                    }
                                 } else {
                                     if (deleteObj == true) {
                                         deleteObj = false;
-                                        this.scale = oldscale;
+                                        //this.scale = {x: oldscalex, y: oldscaley, z: oldscalez};
+                                        $(this.scale).animate({x: oldscalex, y: oldscaley, z: oldscalez});
                                     }
                                 }
 
@@ -195,7 +201,7 @@ var World = {
                         },
                         onDragEnded: function (x, y) {
                             if (deleteObj == true) {
-                                removeModel(this);
+                                World.removeModel(this);
                             }
                             $("#tracking-start-stop-button").attr('src', 'assets/buttons/stop.png');
                             // react to the drag gesture ending
@@ -286,4 +292,4 @@ var World = {
     }
 ;
 
- World.init();
+//World.init();
