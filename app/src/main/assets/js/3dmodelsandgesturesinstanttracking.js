@@ -186,17 +186,16 @@ var World = {
                                         oldscalex = this.scale.x;
                                         oldscaley = this.scale.y;
                                         oldscalez = this.scale.z;
+                                        $("#tracking-start-stop-button").attr('src', 'assets/buttons/opentrash.png');
                                         $(this.scale).animate({x: 0.01, y: 0.01, z: 0.01});
-                                        //this.scale = {x: 0.01, y: 0.01, z: 0.01};
                                     }
                                 } else {
                                     if (deleteObj == true) {
                                         deleteObj = false;
-                                        //this.scale = {x: oldscalex, y: oldscaley, z: oldscalez};
+                                        $("#tracking-start-stop-button").attr('src', 'assets/buttons/trash.png');
                                         $(this.scale).animate({x: oldscalex, y: oldscaley, z: oldscalez});
                                     }
                                 }
-
                             }
                         },
                         onDragEnded: function (x, y) {
@@ -286,7 +285,7 @@ var World = {
             for (var i = 0; i < allModelImgSources.length; i++) {
                 $("#inputs").append("<input data-id=" + i + " class='tracking-model-button list-group-item' type='image' src=" + allModelImgSources[i] + " />");
             }
-            $("#inputs").append("<input id='tracking-model-reset-button' class='tracking-model-button list-group-item' type='image' src='assets/buttons/trash.png' onclick='World.resetModels()' />");
+            $("#inputs").append("<input id='tracking-model-reset-button' class='tracking-model-button list-group-item' type='image' src='assets/buttons/delete_all.png' onclick='World.resetModels()' />");
             this.createOverlays();
         }
     }
