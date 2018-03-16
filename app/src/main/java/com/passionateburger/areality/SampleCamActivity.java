@@ -109,8 +109,8 @@ public class SampleCamActivity extends AbstractArchitectCamActivity {
 
     @Override
     protected boolean hasInstant() {
-        //return true;
-        return (ArchitectView.getSupportedFeaturesForDevice(getApplicationContext()) & ArchitectStartupConfiguration.Features.InstantTracking) != 0;
+        return true;
+        //return (ArchitectView.getSupportedFeaturesForDevice(getApplicationContext()) & ArchitectStartupConfiguration.Features.InstantTracking) != 0;
     }
 
     @Override

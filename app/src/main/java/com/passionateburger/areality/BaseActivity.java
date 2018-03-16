@@ -97,7 +97,9 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+            drawer.closeDrawer(GravityCompat.START); }
+            else if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
         } else {
             super.onBackPressed();
         }
@@ -209,12 +211,11 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(BaseActivity.this, AutoHdSampleCamActivity.class));
             }        } else if (id == R.id.nav_account) {
             ProfileFragment profile = ProfileFragment.newInstance();
-            getSupportFragmentManager().beginTransaction().replace(R.id.flContent, profile).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.flContent, profile).addToBackStack(null).commit();
         } else if (id == R.id.nav_models) {
-
         } else if (id == R.id.nav_whishlist) {
             FavFragment fav = FavFragment.newInstance();
-            getSupportFragmentManager().beginTransaction().replace(R.id.flContent, fav).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.flContent, fav).addToBackStack(null).commit();
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_logout) {
