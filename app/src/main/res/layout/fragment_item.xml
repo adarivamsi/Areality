@@ -4,7 +4,6 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="5dp"
-                                    android:clickable="true"
                                     android:foreground="?selectableItemBackground"
                                     card_view:cardBackgroundColor="@color/common_google_signin_btn_text_light_focused"
                                     card_view:cardCornerRadius="12dp"
@@ -42,7 +41,7 @@
             android:layout_below="@+id/item_title"
             android:layout_toRightOf="@+id/item_image"
             android:text="Company"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/item_rate"
@@ -51,18 +50,18 @@
             android:layout_below="@+id/item_company"
             android:layout_toRightOf="@+id/item_image"
             android:text="4.0★"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white" />
 
         <ImageButton
             android:id="@+id/item_menu"
-            android:layout_width="20dp"
-            android:layout_height="30dp"
+            android:layout_width="30dp"
+            android:layout_height="50dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="@null"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:textColor="@android:color/white"
+            android:tint="@android:color/white"
             card_view:srcCompat="@drawable/ic_dots" />
 
     </RelativeLayout>

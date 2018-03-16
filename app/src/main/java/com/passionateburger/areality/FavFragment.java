@@ -32,12 +32,6 @@ import java.util.Locale;
  * Created by adari on 3/14/2018.
  */
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * interface.
- */
-
 public class FavFragment extends Fragment {
 
     private FirebaseRecyclerAdapter<FireBaseHelper.Favorites, viewholder> mAdapter = null;
@@ -82,7 +76,6 @@ public class FavFragment extends Fragment {
             } else {
                 mAdapter = new FirebaseRecyclerAdapter<FireBaseHelper.Favorites, viewholder>(
                         FireBaseHelper.Favorites.class, R.layout.fragment_item, viewholder.class, query) {
-                    @RequiresApi(api = Build.VERSION_CODES.M)
                     @Override
                     protected void populateViewHolder(viewholder viewHolder, FireBaseHelper.Favorites model, int position) {
                         new FireBaseHelper.Objects().Findbykey(model.object_id, Data -> {
@@ -112,6 +105,7 @@ public class FavFragment extends Fragment {
                                     if (id == R.id.item_download) {
                                         ModelFragment.Download(Data, getContext());
                                     } else if (id == R.id.item_favorite) {
+                                        new FireBaseHelper.Favorites().Remove(Data.Key + mAuth.getCurrentUser().getUid());
                                         mAdapter.getRef(position).removeValue();
                                         mAdapter.notifyDataSetChanged();
                                     } else if (id == R.id.item_delete) {
