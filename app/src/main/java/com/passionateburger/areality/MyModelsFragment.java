@@ -31,9 +31,9 @@ import java.util.Locale;
  * Created by adari on 3/17/2018.
  */
 
-public class MyModelsFragment extends Fragment{
+public class MyModelsFragment extends Fragment {
 
-    private FirebaseRecyclerAdapter<FireBaseHelper.Favorites, viewholder> mAdapter = null;
+    private RecyclerView.Adapter<viewholder> mAdapter = null;
     private RecyclerView recyclerView;
     private BaseActivity activity;
     private List<String> Keys;
@@ -84,7 +84,7 @@ public class MyModelsFragment extends Fragment{
             textView.setText("Your Don't Have any Model");
             textView.setVisibility(View.VISIBLE);
         } else {
-            RecyclerView.Adapter<viewholder> Adapter = new RecyclerView.Adapter<viewholder>() {
+            mAdapter = new RecyclerView.Adapter<viewholder>() {
                 @Override
                 public viewholder onCreateViewHolder(ViewGroup parent, int viewType) {
                     View itemView = LayoutInflater.from(parent.getContext())
@@ -93,7 +93,6 @@ public class MyModelsFragment extends Fragment{
                     return new viewholder(itemView);
                 }
 
-                @RequiresApi(api = Build.VERSION_CODES.M)
                 @Override
                 public void onBindViewHolder(viewholder viewHolder, int position) {
                     new FireBaseHelper.Objects().Findbykey(Keys.get(position), Data -> {
@@ -133,7 +132,6 @@ public class MyModelsFragment extends Fragment{
                                 int id = item.getItemId();
                                 if (id == R.id.item_delete) {
                                     ModelFragment.Delete(Data.Key, getContext());
-                                    mAdapter.getRef(position).removeValue();
                                     mAdapter.notifyDataSetChanged();
                                 }
                                 return true;
@@ -151,7 +149,7 @@ public class MyModelsFragment extends Fragment{
                     return Keys.size();
                 }
             };
-            recyclerView.setAdapter(Adapter);
+            recyclerView.setAdapter(mAdapter);
         }
         return view;
     }
