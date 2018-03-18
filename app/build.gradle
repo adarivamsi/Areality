@@ -41,11 +41,6 @@ android {
         implementation 'com.android.support:recyclerview-v7:26.1.0'
         implementation 'com.android.support:cardview-v7:26.1.0'
         //noinspection GradleCompatible
-        implementation 'com.google.firebase:firebase-database:11.8.0'
-        implementation 'com.google.firebase:firebase-auth:11.8.0'
-        implementation 'com.google.firebase:firebase-storage:11.8.0'
-        implementation 'com.firebaseui:firebase-ui-database:2.0.1'
-        implementation 'com.google.android.gms:play-services-auth:11.8.0'
         implementation 'com.facebook.android:facebook-android-sdk:4.23.0'
         implementation 'com.facebook.android:facebook-login:4.31.0'
         implementation 'com.twitter.sdk.android:twitter:3.0.0'
@@ -62,12 +57,5 @@ android {
         jcenter()
         flatDir { dirs 'libs' }
     }
-    apply plugin: 'com.google.gms.google-services'
 }
-dependencies {
-    implementation 'com.google.firebase:firebase-auth:11.0.4'
-    implementation 'com.google.firebase:firebase-database:11.0.4'
-    implementation 'com.google.firebase:firebase-crash:11.0.4'
-    implementation 'com.google.firebase:firebase-storage:11.0.4'
-}
-apply plugin: 'com.google.gms.google-services'
+

@@ -36,9 +36,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * Created by adari on 3/11/2018.
  */
-ublic
-
-class ProfileFragment extends Fragment implements View.OnClickListener {
+public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     public static final String TAG = "ProfileFragment";
     private static int RESULT_LOAD_IMAGE = 1;

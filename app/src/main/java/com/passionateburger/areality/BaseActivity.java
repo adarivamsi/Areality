@@ -56,8 +56,8 @@ public class BaseActivity extends AppCompatActivity
         MissingDeviceFeatures missingDeviceFeatures = ArchitectView.isDeviceSupported(this,
                 ArchitectStartupConfiguration.Features.ImageTracking | ArchitectStartupConfiguration.Features.InstantTracking);
 
-        if (false) {
-            //if (missingDeviceFeatures.areFeaturesMissing()) {
+        //if (false) {
+            if (missingDeviceFeatures.areFeaturesMissing()) {
             AlertDialog alertDialog = new AlertDialog.Builder(this).create();
             alertDialog.setTitle("Sorry");
             alertDialog.setMessage("Sorry Your Device Is Not Supported." + missingDeviceFeatures.getMissingFeatureMessage());
