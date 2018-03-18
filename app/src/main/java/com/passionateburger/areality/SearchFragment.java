@@ -25,7 +25,7 @@ public class SearchFragment extends Fragment {
     public static final String TAG = "SearchFragment";
     private static final String OBJECT_QUERY = "QUERY";
     private String query;
-    private FirebaseRecyclerAdapter<FireBaseHelper.Objects, RecyclerView.ViewHolder> mAdapter = null;
+    private FirebaseRecyclerAdapter<FireBaseHelper.Objects, ViewHolder> mAdapter = null;
     private RecyclerView recyclerView;
     private BaseActivity activity;
 
@@ -51,7 +51,6 @@ public class SearchFragment extends Fragment {
         query = getArguments().getString(OBJECT_QUERY);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -65,7 +64,7 @@ public class SearchFragment extends Fragment {
         progressDialog.setTitle("Searching");
         progressDialog.setMessage("Searching For " + query);
         progressDialog.show();
-        Query que = FireBaseHelper.Objects.Ref.orderByChild(FireBaseHelper.Objects.Table.Name.text).startAt(this.query).endAt(this.query + "\uf8ff");
+        Query que = FireBaseHelper.Objects.Ref.orderByChild(FireBaseHelper.Objects.Table.Name.text).startAt(this.query);
         new FireBaseHelper.Objects().Where(que, Data -> {
             if (Data.size() == 0) {
                 progressDialog.dismiss();
@@ -74,10 +73,10 @@ public class SearchFragment extends Fragment {
                 textView.setVisibility(View.VISIBLE);
                 //showProgress(false);
             } else {
-                mAdapter = new FirebaseRecyclerAdapter<FireBaseHelper.Objects, RecyclerView.ViewHolder>(
-                        FireBaseHelper.Objects.class, R.layout.fragment_item, RecyclerView.ViewHolder.class, que) {
+                mAdapter = new FirebaseRecyclerAdapter<FireBaseHelper.Objects, ViewHolder>(
+                        FireBaseHelper.Objects.class, R.layout.fragment_item, ViewHolder.class, que) {
                     @Override
-                    protected void populateViewHolder(RecyclerView.ViewHolder viewHolder, FireBaseHelper.Objects model, int position) {
+                    protected void populateViewHolder(ViewHolder viewHolder, FireBaseHelper.Objects model, int position) {
                         model.Findbykey(mAdapter.getRef(position).getKey(), Data -> {
                             viewHolder.Initialize(Data);
                             viewHolder.mView.setOnClickListener(v -> {
