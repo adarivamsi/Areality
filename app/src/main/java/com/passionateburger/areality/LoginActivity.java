@@ -52,7 +52,7 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
  * Created by adari on 3/11/2018.
  */
 
-public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, OnClickListener {
 
     private static final String TAG = "Login Activity";
     private static final int RC_SIGN_IN = 9001;
@@ -188,26 +188,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         mAuth = FirebaseAuth.getInstance();
         //endregion
 
-        //region Facebook HashKey
-        /*PackageInfo info;
-        try {
-            info = getPackageManager().getPackageInfo("com.fcih.gp.furniturego", PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md;
-                md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                String something = new String(Base64.encode(md.digest(), 0));
-                //String something = new String(Base64.encodeBytes(md.digest()));
-                Log.e("hash key", something);
-            }
-        } catch (PackageManager.NameNotFoundException e1) {
-            Log.e("name not found", e1.toString());
-        } catch (NoSuchAlgorithmException e) {
-            Log.e("no such an algorithm", e.toString());
-        } catch (Exception e) {
-            Log.e("exception", e.toString());
-        }*/
-        //endregion
+
 
         TwitterConfig config = new TwitterConfig.Builder(this)
                 .logger(new DefaultLogger(Log.DEBUG))
@@ -381,9 +362,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     } else {
                         final FirebaseUser user = task.getResult().getUser();
                         FireBaseHelper.Users FUSER = new FireBaseHelper.Users();
-                        FUSER.name = user.getDisplayName();
-                        FUSER.email = user.getEmail();
-                        FUSER.image_uri = user.getPhotoUrl().toString();
+                        FUSER.name = user.getDisplayName() != null ? user.getDisplayName() : "";
+                        FUSER.email = user.getEmail() != null ? user.getEmail() : "";
+                        FUSER.image_uri = user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : DEAFULT_IMAGE;
                         FUSER.type_id = DESIGNER_TYPE;
                         FUSER.Add(user.getUid());
                         showProgress(false);
