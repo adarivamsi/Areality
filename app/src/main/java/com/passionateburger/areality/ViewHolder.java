@@ -7,7 +7,6 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,7 +27,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     public final TextView mRateView;
     public final ImageView mImageView;
     public final ImageButton mImageButton;
-    public final PopupMenu mPopupMenu;
+    public final android.support.v7.widget.PopupMenu mPopupMenu;
     private final Context mContext;
 
     public ViewHolder(View view) {
@@ -40,7 +39,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         mImageView = (ImageView) view.findViewById(R.id.item_image);
         mImageButton = (ImageButton) view.findViewById(R.id.item_menu);
         mContext = mView.getContext();
-        mPopupMenu = new PopupMenu(mContext, mImageButton);
+        mPopupMenu = new android.support.v7.widget.PopupMenu(mContext, mImageButton);
         MenuInflater inflater = mPopupMenu.getMenuInflater();
         inflater.inflate(R.menu.pop_menu, mPopupMenu.getMenu());
         mImageButton.setOnClickListener(v -> {

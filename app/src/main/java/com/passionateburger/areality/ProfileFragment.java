@@ -36,7 +36,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * Created by adari on 3/11/2018.
  */
-public class ProfileFragment extends Fragment implements View.OnClickListener {
+public class ProfileFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
     public static final String TAG = "ProfileFragment";
     private static int RESULT_LOAD_IMAGE = 1;
@@ -64,7 +64,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     public void onDestroyView() {
         super.onDestroyView();
         try {
-            FragmentTransaction ft = getActivity().getSupportFragmentManager()
+            android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager()
                     .beginTransaction();
             ft.remove(this);
             ft.commit();
@@ -105,7 +105,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         mview.findViewById(R.id.Browsebutton).setOnClickListener(this);
         return mview;
     }
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

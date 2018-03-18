@@ -2,6 +2,7 @@ package com.passionateburger.areality;
 
 import com.wikitude.architect.ArchitectJavaScriptInterfaceListener;
 import com.wikitude.architect.ArchitectView;
+import com.wikitude.architect.ArchitectView.SensorAccuracyChangeListener;
 
 /**
  * Created by adari on 3/11/2018.
@@ -44,7 +45,7 @@ public interface ArchitectViewHolderInterface {
  /**
   * @return Implementation of Sensor-Accuracy-Listener. That way you can e.g. show prompt to calibrate compass
   */
- ArchitectView.SensorAccuracyChangeListener getSensorAccuracyListener();
+ SensorAccuracyChangeListener getSensorAccuracyListener();
 
  /**
   * sets maximum distance to render places. In case your places are more than 50km away from the user you must adjust this value (compare 'AR.context.scene.cullingDistance').

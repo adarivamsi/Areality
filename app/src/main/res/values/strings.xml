@@ -1,8 +1,8 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
     <string name="app_name">Areality</string>
 
     <!-- Strings related to Facebook login -->
-
     <string name="facebook_app_id">355089614990244</string>
     <string name="fb_login_protocol_scheme">fb355089614990244</string>
 

@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.wikitude.architect.ArchitectJavaScriptInterfaceListener;
 import com.wikitude.architect.ArchitectStartupConfiguration;
 import com.wikitude.architect.ArchitectView;
+import com.wikitude.architect.ArchitectView.SensorAccuracyChangeListener;
 import com.wikitude.architect.services.camera.CameraLifecycleListener;
 import com.wikitude.common.camera.CameraSettings;
 import com.wikitude.common.permission.PermissionManager;
@@ -50,7 +51,7 @@ public abstract class AbstractArchitectCamActivity extends Activity implements A
     /**
      * sensor accuracy listener in case you want to display calibration hints
      */
-    protected ArchitectView.SensorAccuracyChangeListener sensorAccuracyListener;
+    protected SensorAccuracyChangeListener	sensorAccuracyListener;
 
     /**
      * JS interface listener handling e.g. 'AR.platform.sendJSONObject({foo:"bar", bar:123})' calls in JavaScript
@@ -233,7 +234,7 @@ public abstract class AbstractArchitectCamActivity extends Activity implements A
                     // set the culling distance - meaning: the maximum distance to render geo-content
                     this.architectView.setCullingDistance( this.getInitialCullingDistanceMeters() );
                 }
-                String path = Environment.getExternalStorageDirectory().toString() + File.separator + "FurnitureGo";
+                String path = Environment.getExternalStorageDirectory().toString() + File.separator + "Areality";
                 callJavaScript("World.loadPathFromJsonData", getDownloaded3D(path));
             } catch (IOException e1) {
                 e1.printStackTrace();

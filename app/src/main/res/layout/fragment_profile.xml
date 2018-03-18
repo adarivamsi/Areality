@@ -1,10 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              tools:context=".ProfileFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ProfileFragment">
 
     <android.support.v7.widget.ActionBarContainer
         android:layout_width="match_parent"
@@ -57,16 +57,16 @@
                 android:orientation="horizontal">
 
                 <com.makeramen.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                                 android:id="@+id/userimage"
-                                                                 android:layout_width="100dp"
-                                                                 android:layout_height="100dp"
-                                                                 android:scaleType="fitStart"
-                                                                 app:riv_border_color="#333333"
-                                                                 app:riv_border_width="1dip"
-                                                                 app:riv_corner_radius="35dip"
-                                                                 app:riv_mutate_background="true"
-                                                                 app:riv_oval="true"
-                                                                 app:riv_tile_mode="clamp" />
+                    android:id="@+id/userimage"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:scaleType="fitStart"
+                    app:riv_border_color="#333333"
+                    app:riv_border_width="1dip"
+                    app:riv_corner_radius="35dip"
+                    app:riv_mutate_background="true"
+                    app:riv_oval="true"
+                    app:riv_tile_mode="clamp" />
             </LinearLayout>
         </LinearLayout>
 

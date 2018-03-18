@@ -1,12 +1,10 @@
 package com.passionateburger.areality;
 
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.RequiresApi;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,7 +25,7 @@ import java.util.List;
 public class MyModelsFragment extends Fragment {
 
     public static final String TAG = "MyModelsFragment";
-    private RecyclerView.Adapter<RecyclerView.ViewHolder> mAdapter = null;
+    private RecyclerView.Adapter<ViewHolder> mAdapter = null;
     private RecyclerView recyclerView;
     private BaseActivity activity;
     private List<String> Keys;
@@ -49,7 +47,6 @@ public class MyModelsFragment extends Fragment {
         activity = (BaseActivity) getActivity();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -79,17 +76,17 @@ public class MyModelsFragment extends Fragment {
             textView.setText(getResources().getText(R.string.empty_model));
             textView.setVisibility(View.VISIBLE);
         } else {
-            mAdapter = new RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+            mAdapter = new RecyclerView.Adapter<ViewHolder>() {
                 @Override
-                public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                     View itemView = LayoutInflater.from(parent.getContext())
                             .inflate(R.layout.fragment_item, parent, false);
 
-                    return new RecyclerView.ViewHolder(itemView);
+                    return new ViewHolder(itemView);
                 }
 
                 @Override
-                public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+                public void onBindViewHolder(ViewHolder viewHolder, int position) {
                     new FireBaseHelper.Objects().Findbykey(Keys.get(position), Data -> {
                         viewHolder.Initialize(Data);
                         viewHolder.mView.setOnClickListener(v -> {

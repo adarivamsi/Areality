@@ -41,7 +41,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
@@ -53,7 +55,7 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
  * Created by adari on 3/11/2018.
  */
 
-public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, OnClickListener {
+public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private static final String TAG = "Login Activity";
     private static final int RC_SIGN_IN = 9001;
@@ -188,8 +190,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         mtwitter.setOnClickListener(this);
         mAuth = FirebaseAuth.getInstance();
         //endregion
-
-
 
         TwitterConfig config = new TwitterConfig.Builder(this)
                 .logger(new DefaultLogger(Log.DEBUG))
@@ -542,3 +542,4 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
 }
+

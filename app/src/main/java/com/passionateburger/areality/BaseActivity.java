@@ -1,6 +1,5 @@
 package com.passionateburger.areality;
 
-import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,15 +13,16 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,11 +57,11 @@ public class BaseActivity extends AppCompatActivity
                 ArchitectStartupConfiguration.Features.ImageTracking | ArchitectStartupConfiguration.Features.InstantTracking);
 
         //if (false) {
-            if (missingDeviceFeatures.areFeaturesMissing()) {
-            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        if (missingDeviceFeatures.areFeaturesMissing()) {
+            android.support.v7.app.AlertDialog alertDialog = new android.support.v7.app.AlertDialog.Builder(this).create();
             alertDialog.setTitle("Sorry");
             alertDialog.setMessage("Sorry Your Device Is Not Supported." + missingDeviceFeatures.getMissingFeatureMessage());
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+            alertDialog.setButton(android.support.v7.app.AlertDialog.BUTTON_NEUTRAL, "OK",
                     (dialog, which) -> {
                         finish();
                         dialog.dismiss();
@@ -87,7 +87,7 @@ public class BaseActivity extends AppCompatActivity
                     }
 
                 };
-                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+                android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
                 setSupportActionBar(toolbar);
                 drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 toggle = new ActionBarDrawerToggle(
@@ -185,12 +185,12 @@ public class BaseActivity extends AppCompatActivity
     public void SearchSetup(Menu menu) {
         MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
         final ImageView mCloseButton = (ImageView) searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(
                 new ComponentName(this, BaseActivity.class)
         ));
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 SearchFragment fragment = SearchFragment.newInstance(query);

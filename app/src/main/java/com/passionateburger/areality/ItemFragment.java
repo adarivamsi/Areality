@@ -1,9 +1,9 @@
 package com.passionateburger.areality;
 
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,7 +24,7 @@ public class ItemFragment extends Fragment {
     private static final String OBJECT_KEY = "KEY";
     private static final String OBJECT_NAME = "NAME";
     private String CategoryKEY;
-    private FirebaseRecyclerAdapter<FireBaseHelper.Objects, RecyclerView.ViewHolder> mAdapter = null;
+    private FirebaseRecyclerAdapter<FireBaseHelper.Objects, ViewHolder> mAdapter = null;
     private RecyclerView recyclerView;
     private String CategoryNAME;
 
@@ -71,11 +71,10 @@ public class ItemFragment extends Fragment {
                 empty.setText(getResources().getText(R.string.empty_category));
                 empty.setVisibility(View.VISIBLE);
             } else {
-                mAdapter = new FirebaseRecyclerAdapter<FireBaseHelper.Objects,
-                        RecyclerView.ViewHolder>(
-                        FireBaseHelper.Objects.class, R.layout.fragment_item, RecyclerView.ViewHolder.class, query) {
+                mAdapter = new FirebaseRecyclerAdapter<FireBaseHelper.Objects, ViewHolder>(
+                        FireBaseHelper.Objects.class, R.layout.fragment_item, ViewHolder.class, query) {
                     @Override
-                    protected void populateViewHolder(RecyclerView.ViewHolder viewHolder, FireBaseHelper.Objects model, int position) {
+                    protected void populateViewHolder(ViewHolder viewHolder, FireBaseHelper.Objects model, int position) {
                         model.Findbykey(mAdapter.getRef(position).getKey(), Data -> {
                             viewHolder.Initialize(Data);
                             viewHolder.mView.setOnClickListener(v -> {

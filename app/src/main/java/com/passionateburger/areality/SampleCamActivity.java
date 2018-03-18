@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.wikitude.architect.ArchitectJavaScriptInterfaceListener;
 import com.wikitude.architect.ArchitectStartupConfiguration;
 import com.wikitude.architect.ArchitectView;
+import com.wikitude.architect.ArchitectView.CaptureScreenCallback;
+import com.wikitude.architect.ArchitectView.SensorAccuracyChangeListener;
 import com.wikitude.common.camera.CameraSettings;
 
 import org.json.JSONException;
@@ -62,7 +64,7 @@ public class SampleCamActivity extends AbstractArchitectCamActivity {
     }
 
     @Override
-    public ArchitectView.SensorAccuracyChangeListener getSensorAccuracyListener() {
+    public SensorAccuracyChangeListener getSensorAccuracyListener() {
         return accuracy -> {
             /* UNRELIABLE = 0, LOW = 1, MEDIUM = 2, HIGH = 3 */
             if (accuracy < SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM && SampleCamActivity.this != null && !SampleCamActivity.this.isFinishing() && System.currentTimeMillis() - SampleCamActivity.this.lastCalibrationToastShownTimeMillis > 5 * 1000) {
@@ -78,7 +80,7 @@ public class SampleCamActivity extends AbstractArchitectCamActivity {
             try {
                 switch (jsonObject.getString("action")) {
                     case "capture_screen":
-                        SampleCamActivity.this.architectView.captureScreen(ArchitectView.CaptureScreenCallback.CAPTURE_MODE_CAM_AND_WEBVIEW, screenCapture -> {
+                        SampleCamActivity.this.architectView.captureScreen(CaptureScreenCallback.CAPTURE_MODE_CAM_AND_WEBVIEW, screenCapture -> {
                             if (ContextCompat.checkSelfPermission(SampleCamActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                                 SampleCamActivity.this.screenCapture = screenCapture;
                                 ActivityCompat.requestPermissions(SampleCamActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WIKITUDE_PERMISSIONS_REQUEST_EXTERNAL_STORAGE);

@@ -1,9 +1,9 @@
 package com.passionateburger.areality;
 
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -62,10 +62,10 @@ public class FavFragment extends Fragment {
                 textView.setVisibility(View.VISIBLE);
                 //showProgress(false);
             } else {
-                mAdapter = new FirebaseRecyclerAdapter<FireBaseHelper.Favorites, RecyclerView.ViewHolder>(
-                        FireBaseHelper.Favorites.class, R.layout.fragment_item, RecyclerView.ViewHolder.class, query) {
+                mAdapter = new FirebaseRecyclerAdapter<FireBaseHelper.Favorites, ViewHolder>(
+                        FireBaseHelper.Favorites.class, R.layout.fragment_item, ViewHolder.class, query) {
                     @Override
-                    protected void populateViewHolder(RecyclerView.ViewHolder viewHolder, FireBaseHelper.Favorites model, int position) {
+                    protected void populateViewHolder(ViewHolder viewHolder, FireBaseHelper.Favorites model, int position) {
                         new FireBaseHelper.Objects().Findbykey(model.object_id, Data -> {
                             viewHolder.Initialize(Data);
                             viewHolder.mView.setOnClickListener(v -> {
