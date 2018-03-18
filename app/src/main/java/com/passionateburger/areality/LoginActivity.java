@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private static final String TAG = "Login Activity";
     private static final int RC_SIGN_IN = 9001;
     private static final String DESIGNER_TYPE = "Designer";
-    private static final String DEAFULT_IMAGE = "https://firebasestorage.googleapis.com/v0/b/furniture-go.appspot.com/o/ProfileImage%2Fdeafult.png?alt=media&token=d2ce2ee2-ed54-4426-8bf2-13cb19d59d4c";
+    private static final String DEAFULT_IMAGE = "gs://firebase-areality.appspot.com/user.png";
     // UI references.
     private ProgressBar mProgressView;
     private LinearLayout mContainerView;
